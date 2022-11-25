@@ -6,7 +6,9 @@ const cors = require("cors");
 const { router } = require("./router/tasksRouter");
 const { config } = require("dotenv");
 config();
-const PORT = 4500 || process.env.PORT;
+const PORT = process.env.PORT || 4500;
+const notFound = require("./middleware/not-found");
+const errorHandler = require("./middleware/error-handler");
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(function (req, res, next) {
@@ -32,7 +34,10 @@ app.use(function (req, res, next) {
   // Pass to next layer of middleware
   next();
 });
+
 app.use("/api/tasks", router);
+
+//app.use(errorHandler);
 app.get("/", (req, res) => {
   res.send("SERVER RUNNING");
 });
@@ -48,3 +53,5 @@ const startServer = async () => {
   }
 };
 startServer();
+app.use(notFound);
+app.use(errorHandler);
